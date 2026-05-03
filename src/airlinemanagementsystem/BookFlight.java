@@ -21,7 +21,7 @@ public class BookFlight extends JFrame implements ActionListener {
         setLayout(null);
 
         JLabel heading = new JLabel("Book Flight");
-        heading.setBounds(360, 20, 500, 35);
+        heading.setBounds(360, 20, 500, 55);
         heading.setFont(new Font("Tahoma", Font.PLAIN, 32));
         heading.setForeground(Color.WHITE);
         add(heading);
@@ -108,12 +108,16 @@ public class BookFlight extends JFrame implements ActionListener {
         // Database call to populate choices
         try {
             Conn c = new Conn();
-            String query = "select * from flight";
-            ResultSet rs = c.s.executeQuery(query);
+            // Source dropdown (unique values)
+            ResultSet rs1 = c.s.executeQuery("select distinct source from flight");
+            while (rs1.next()) {
+                source.add(rs1.getString("source"));
+            }
 
-            while (rs.next()) {
-                source.add(rs.getString("source"));
-                destination.add(rs.getString("destination"));
+            // Destination dropdown (unique values)
+            ResultSet rs2 = c.s.executeQuery("select distinct destination from flight");
+            while (rs2.next()) {
+                destination.add(rs2.getString("destination"));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -153,7 +157,8 @@ public class BookFlight extends JFrame implements ActionListener {
         add(lbldate);
 
         dcdate = new JDateChooser();
-        dcdate.setBounds(220, 530, 150, 25);
+        dcdate.setBounds(220, 530, 150, 30);
+        dcdate.setForeground(Color.WHITE);
         add(dcdate);
         // Image Handling
         try {
@@ -169,7 +174,7 @@ public class BookFlight extends JFrame implements ActionListener {
         }
 
         bookflight = new JButton("Book Flight");
-        bookflight.setBounds(220, 580, 150, 25);
+        bookflight.setBounds(220, 580, 150, 35);
         bookflight.addActionListener(this);
         add(bookflight);
 

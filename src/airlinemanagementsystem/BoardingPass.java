@@ -144,7 +144,7 @@ public class BoardingPass extends JFrame implements ActionListener {
                     ClassLoader.getSystemResource("airlinemanagementsystem/icons/intro.jpeg"));
             Image i = img.getImage().getScaledInstance(280, 180, Image.SCALE_SMOOTH);
             JLabel image = new JLabel(new ImageIcon(i));
-            image.setBounds(600, 100, 250, 200);
+            image.setBounds(650, 100, 250, 200);
             image.setBorder(BorderFactory.createLineBorder(Color.WHITE, 2)); // Added boundary
             add(image);
         } catch (Exception e) {
