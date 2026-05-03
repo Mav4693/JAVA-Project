@@ -1,0 +1,6 @@
+.vscode/
+Libraries/
+config.properties
+*.class
+*.log
+*.jar
