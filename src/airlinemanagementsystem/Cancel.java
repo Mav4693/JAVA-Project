@@ -18,7 +18,7 @@ public class Cancel extends JFrame implements ActionListener {
 
         Random random = new Random();
 
-        JLabel heading = new JLabel("CANCELLATION");
+        JLabel heading = new JLabel("Cancel Ticket");
         heading.setBounds(180, 20, 500, 35);
         heading.setFont(new Font("Tahoma", Font.PLAIN, 32));
         heading.setForeground(Color.WHITE);
