@@ -5,6 +5,7 @@ import com.toedter.calendar.JDateChooser;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.sql.*;
 
 public class Source_Destination extends JFrame implements ActionListener {
 
@@ -20,12 +21,14 @@ public class Source_Destination extends JFrame implements ActionListener {
         JLabel heading = new JLabel("Search Flight");
         heading.setBounds(120, 20, 300, 30);
         heading.setFont(new Font("Tahoma", Font.BOLD, 24));
+        heading.setForeground(Color.WHITE);
         add(heading);
 
         // SOURCE
         JLabel flightSource = new JLabel("Source");
         flightSource.setBounds(50, 100, 100, 25);
         flightSource.setFont(new Font("Tahoma", Font.PLAIN, 16));
+        flightSource.setForeground(Color.WHITE);
         add(flightSource);
 
         String citiesSource[] = {
@@ -41,6 +44,7 @@ public class Source_Destination extends JFrame implements ActionListener {
         JLabel flightDestination = new JLabel("Destination");
         flightDestination.setBounds(50, 160, 100, 25);
         flightDestination.setFont(new Font("Tahoma", Font.PLAIN, 16));
+        flightDestination.setForeground(Color.WHITE);
         add(flightDestination);
 
         String citiesDesti[] = {
@@ -59,6 +63,7 @@ public class Source_Destination extends JFrame implements ActionListener {
         JLabel date = new JLabel("Date");
         date.setBounds(50, 220, 100, 25);
         date.setFont(new Font("Tahoma", Font.PLAIN, 16));
+        date.setForeground(Color.WHITE);
         add(date);
 
         dcdate = new JDateChooser();
@@ -66,49 +71,52 @@ public class Source_Destination extends JFrame implements ActionListener {
         add(dcdate);
 
         // BUTTON
-        submit = new JButton("Search");
-        submit.setBounds(150, 300, 120, 35);
-        submit.setBackground(Color.BLACK);
-        submit.setForeground(Color.WHITE);
-
+        submit = new JButton("Search Flights");
+        submit.setBounds(150, 300, 150, 38);
         submit.addActionListener(this);
-
         add(submit);
 
         // FRAME SETTINGS
-        setTitle("Flight Search");
-
-        setSize(450, 450);
-
+        setTitle("Search Flight");
+        setSize(450, 420);
         setLocation(500, 200);
-
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        ThemeManager.applyThemeToFrame(this);
         setVisible(true);
     }
 
     @Override
     public void actionPerformed(ActionEvent ae) {
 
-        String source = (String) Source.getSelectedItem();
-
+        String source      = (String) Source.getSelectedItem();
         String destination = (String) Destination.getSelectedItem();
+        String ddate       = ((JTextField) dcdate.getDateEditor().getUiComponent()).getText();
 
-        String ddate = ((JTextField) dcdate.getDateEditor()
-                .getUiComponent()).getText();
+        if (ddate == null || ddate.trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Please select a travel date.",
+                    "Date Required", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
 
-        // DIALOG BOX
-        JOptionPane.showMessageDialog(
-                null,
-                "Source : " + source +
-                        "\nDestination : " + destination +
-                        "\nDate : " + ddate);
+        // Check if a flight exists for this route
+        try {
+            Conn conn = new Conn();
+            ResultSet rs = conn.s.executeQuery(
+                    "SELECT f_name FROM flight WHERE source = '" + source +
+                    "' AND destination = '" + destination + "' LIMIT 1");
+            if (!rs.next()) {
+                JOptionPane.showMessageDialog(this,
+                        "No flights available for " + source + " → " + destination,
+                        "No Flights Found", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
 
-        // CLOSE CURRENT WINDOW
+        // Open FlightInfo with the chosen route & date
         setVisible(false);
-
-        // OPEN FLIGHT INFO WINDOW
-        new FlightInfo();
+        new FlightInfo(source, destination, ddate);
     }
 
     public static void main(String[] args) {

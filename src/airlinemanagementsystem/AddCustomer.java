@@ -2,142 +2,198 @@ package airlinemanagementsystem;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionListener;
 import java.awt.event.*;
 
-public  class AddCustomer extends JFrame implements ActionListener{
+public class AddCustomer extends JFrame implements ActionListener {
 
-    JTextField tfname,tfphone,tfaadhar ,tfnationality ,tfaddress;
-    JRadioButton rbmale,rbfemale;
+    JTextField tfname, tfphone, tfaadhar, tfnationality, tfaddress;
+    JRadioButton rbmale, rbfemale;
 
-    public AddCustomer(){
+    // ── Layout constants ────────────────────────────────────────────────────
+    private static final int LBL_X     = 60;    // label left edge
+    private static final int FLD_X     = 220;   // field left edge
+    private static final int FLD_W     = 200;   // field width
+    private static final int ROW_H     = 28;    // field / label height
+    private static final int ROW_GAP   = 55;    // vertical gap between rows
+    private static final int START_Y   = 90;    // first row Y
 
+    public AddCustomer() {
 
         setLayout(null);
+        setTitle("Add Customer Details");
 
+        // ── HEADING ──────────────────────────────────────────────────────────
         JLabel heading = new JLabel("Add Customer Details");
-        heading.setBounds(220, 20, 500, 35);
-        heading.setFont(new Font("Tahoma",Font.PLAIN,32));
-        heading.setForeground(Color.BLUE);
+        heading.setBounds(LBL_X, 20, 500, 42);
+        heading.setFont(new Font("Segoe UI", Font.BOLD, 30));
+        heading.setForeground(new Color(0, 150, 255));   // accent blue
         add(heading);
-        
-        JLabel lblname = new JLabel("Name");
-        lblname.setBounds(60, 80, 150, 25);
-        lblname.setFont(new Font("Tahoma",Font.PLAIN,16));
-        add(lblname);
 
-         tfname = new JTextField();
-        tfname.setBounds(220,80,150,25);
+        // ── helper to position a label ───────────────────────────────────────
+        // Row 0 — Name
+        int y = START_Y;
+        JLabel lblname = fieldLabel("Name");
+        lblname.setBounds(LBL_X, y, 150, ROW_H);
+        add(lblname);
+        tfname = styledField();
+        tfname.setBounds(FLD_X, y, FLD_W, ROW_H);
         add(tfname);
 
-           JLabel lblnationality = new JLabel("Nationality");
-        lblnationality.setBounds(60, 130, 150, 25);
-        lblnationality.setFont(new Font("Tahoma",Font.PLAIN,16));
+        // Row 1 — Nationality
+        y += ROW_GAP;
+        JLabel lblnationality = fieldLabel("Nationality");
+        lblnationality.setBounds(LBL_X, y, 150, ROW_H);
         add(lblnationality);
-
-         tfnationality = new JTextField();
-        tfnationality.setBounds(220,130,150,25);
+        tfnationality = styledField();
+        tfnationality.setBounds(FLD_X, y, FLD_W, ROW_H);
         add(tfnationality);
 
-           JLabel lblaadhar = new JLabel("Aadhar Number");
-        lblaadhar.setBounds(60, 180, 150, 25);
-        lblaadhar.setFont(new Font("Tahoma",Font.PLAIN,16));
+        // Row 2 — Aadhar Number
+        y += ROW_GAP;
+        JLabel lblaadhar = fieldLabel("Aadhar Number");
+        lblaadhar.setBounds(LBL_X, y, 150, ROW_H);
         add(lblaadhar);
-
-         tfaadhar = new JTextField();
-        tfaadhar.setBounds(220,180,150,25);
+        tfaadhar = styledField();
+        tfaadhar.setBounds(FLD_X, y, FLD_W, ROW_H);
         add(tfaadhar);
 
-           JLabel lbladdress = new JLabel("Address");
-        lbladdress.setBounds(60, 230, 150, 25);
-        lbladdress.setFont(new Font("Tahoma",Font.PLAIN,16));
+        // Row 3 — Address
+        y += ROW_GAP;
+        JLabel lbladdress = fieldLabel("Address");
+        lbladdress.setBounds(LBL_X, y, 150, ROW_H);
         add(lbladdress);
-
-         tfaddress = new JTextField();
-        tfaddress.setBounds(220,230,150,25);
+        tfaddress = styledField();
+        tfaddress.setBounds(FLD_X, y, FLD_W, ROW_H);
         add(tfaddress);
 
-           JLabel lblgender = new JLabel("Gender");
-        lblgender.setBounds(60, 280, 150, 25);
-        lblgender.setFont(new Font("Tahoma",Font.PLAIN,16));
+        // Row 4 — Gender (radio buttons, properly spaced)
+        y += ROW_GAP;
+        JLabel lblgender = fieldLabel("Gender");
+        lblgender.setBounds(LBL_X, y, 150, ROW_H);
         add(lblgender);
 
-        ButtonGroup gendergroup = new ButtonGroup();
+        ButtonGroup genderGroup = new ButtonGroup();
 
-         rbmale = new JRadioButton("Male");
-        rbmale.setBounds(220,280,70,25);
+        rbmale = new JRadioButton("Male");
+        rbmale.setBounds(FLD_X, y, 90, ROW_H);
+        rbmale.setBackground(new Color(15, 15, 25));
+        rbmale.setForeground(Color.WHITE);
+        rbmale.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        rbmale.setFocusPainted(false);
         add(rbmale);
-        
-         rbfemale = new JRadioButton("FEMALE");
-        rbfemale.setBounds(300,280,70,25);
+
+        rbfemale = new JRadioButton("Female");
+        rbfemale.setBounds(FLD_X + 100, y, 95, ROW_H);
+        rbfemale.setBackground(new Color(15, 15, 25));
+        rbfemale.setForeground(Color.WHITE);
+        rbfemale.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        rbfemale.setFocusPainted(false);
         add(rbfemale);
 
-      gendergroup.add(rbfemale);
-      gendergroup.add(rbmale);
+        genderGroup.add(rbmale);
+        genderGroup.add(rbfemale);
+        rbmale.setSelected(true);   // default selection
 
-      JLabel lblphone = new JLabel("Phone");
-      lblphone.setBounds(60,330,150,25);
-      lblphone.setFont(new Font("Tahoma",Font.PLAIN,16));
-      add(lblphone);
+        // Row 5 — Phone
+        y += ROW_GAP;
+        JLabel lblphone = fieldLabel("Phone");
+        lblphone.setBounds(LBL_X, y, 150, ROW_H);
+        add(lblphone);
+        tfphone = styledField();
+        tfphone.setBounds(FLD_X, y, FLD_W, ROW_H);
+        add(tfphone);
 
-       tfphone = new JTextField();
-      tfphone.setBounds(220,330,150,25);
-      add(tfphone);
+        // ── SAVE BUTTON — centred below all fields ───────────────────────────
+        y += ROW_GAP + 10;   // a little extra breathing room
+        JButton save = new JButton("SAVE CUSTOMER");
+        save.setBounds(FLD_X, y, 200, 40);
+        save.setBackground(new Color(0, 150, 255));
+        save.setForeground(Color.WHITE);
+        save.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        save.setFocusPainted(false);
+        save.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        save.setBorder(BorderFactory.createEmptyBorder(8, 20, 8, 20));
+        save.addMouseListener(new MouseAdapter() {
+            public void mouseEntered(MouseEvent e) { save.setBackground(new Color(0, 180, 255)); }
+            public void mouseExited(MouseEvent e)  { save.setBackground(new Color(0, 150, 255)); }
+        });
+        save.addActionListener(this);
+        add(save);
 
-      JButton  save = new JButton("SAVE");
-      save.setBackground(Color.black);
-      save.setForeground(Color.white);
-      save.setBounds(220,380,150,30);
-      save.addActionListener(this);
-      add(save);
-ImageIcon image = new ImageIcon(
-    getClass().getResource("/airlinemanagementsystem/icons/ashokstambh.png")
-);
+        // ── DECORATIVE IMAGE (right side) ────────────────────────────────────
+        try {
+            ImageIcon image = new ImageIcon(
+                getClass().getResource("/airlinemanagementsystem/icons/ashokstambh.png")
+            );
+            Image img = image.getImage().getScaledInstance(280, 400, Image.SCALE_SMOOTH);
+            JLabel lblimage = new JLabel(new ImageIcon(img));
+            lblimage.setBounds(490, 70, 280, 400);
+            lblimage.setBorder(BorderFactory.createLineBorder(new Color(50, 50, 80), 2));
+            add(lblimage);
+        } catch (Exception e) {
+            System.out.println("Image not found.");
+        }
 
-
-Image img = image.getImage().getScaledInstance(280, 400, Image.SCALE_SMOOTH);
-ImageIcon scaledIcon = new ImageIcon(img);
-
-JLabel lblimage = new JLabel(scaledIcon);
-lblimage.setBounds(450, 80, 280, 400);
-lblimage.setBorder(BorderFactory.createLineBorder(Color.WHITE, 2));
-add(lblimage);
-
-        setSize(900,600);
-        setLocation(300,150);
+        setSize(860, 580);
+        setLocation(300, 150);
         ThemeManager.applyThemeToFrame(this);
         setVisible(true);
     }
-    public void actionPerformed (ActionEvent  ae){
 
-        String name = tfname.getText();
-        String nationality = tfnationality.getText();
-        String phone = tfphone.getText();
-        String address = tfaddress.getText();
-        String aadhar = tfaadhar.getText();
-        String gender = null;
+    // ── Helpers ──────────────────────────────────────────────────────────────
 
-        if(rbmale.isSelected()){
-            gender = "Male";
+    private JLabel fieldLabel(String text) {
+        JLabel l = new JLabel(text);
+        l.setFont(new Font("Segoe UI", Font.PLAIN, 15));
+        l.setForeground(new Color(180, 190, 210));
+        return l;
+    }
+
+    private JTextField styledField() {
+        JTextField tf = new JTextField();
+        tf.setBackground(new Color(25, 25, 45));
+        tf.setForeground(Color.WHITE);
+        tf.setCaretColor(new Color(0, 150, 255));
+        tf.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        tf.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(new Color(50, 50, 80), 1),
+            BorderFactory.createEmptyBorder(4, 8, 4, 8)
+        ));
+        return tf;
+    }
+
+    // ── Action ───────────────────────────────────────────────────────────────
+
+    public void actionPerformed(ActionEvent ae) {
+        String name        = tfname.getText().trim();
+        String nationality = tfnationality.getText().trim();
+        String phone       = tfphone.getText().trim();
+        String address     = tfaddress.getText().trim();
+        String aadhar      = tfaadhar.getText().trim();
+        String gender      = rbmale.isSelected() ? "Male" : "Female";
+
+        if (name.isEmpty() || aadhar.isEmpty()) {
+            JOptionPane.showMessageDialog(this,
+                "Name and Aadhar Number are required.",
+                "Incomplete", JOptionPane.WARNING_MESSAGE);
+            return;
         }
-        else{
-            gender = "Female";
-        }
 
-
-        try{
-
+        try {
             Conn conn = new Conn();
-            String query = "insert into passenger values('"+name+"','"+nationality+"', '"+phone+"','"+address+"','"+aadhar+"','"+gender+"')";
+            String query = "insert into passenger values('" + name + "','" + nationality
+                    + "', '" + phone + "','" + address + "','" + aadhar + "','" + gender + "')";
             conn.s.executeUpdate(query);
             JOptionPane.showMessageDialog(null, "Customer Details Added Successfully");
             setVisible(false);
-
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "DB Error: " + e.getMessage(),
+                    "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
-    public static void main( String []args){
+
+    public static void main(String[] args) {
         new AddCustomer();
     }
 }
