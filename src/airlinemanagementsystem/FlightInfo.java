@@ -182,8 +182,8 @@ public class FlightInfo extends JFrame {
                 BorderFactory.createMatteBorder(0, 3, 0, 0, ACCENT),
                 BorderFactory.createEmptyBorder(12, 16, 12, 16)
         ));
-        card.setMaximumSize(new Dimension(Integer.MAX_VALUE, 120));
-        card.setPreferredSize(new Dimension(860, 120));
+        card.setMaximumSize(new Dimension(Integer.MAX_VALUE, 160));
+        card.setPreferredSize(new Dimension(860, 160));
 
         // title
         JLabel lbl = new JLabel("Passenger " + idx);
@@ -237,25 +237,41 @@ public class FlightInfo extends JFrame {
         tfAadhar.setBounds(628, 28, 155, 28);
         card.add(tfAadhar);
 
-        // ── Confirm button — right-aligned ──────────────────────────────────
+        // ── Row 2: Nationality dropdown ───────────────────────────────────────
+        JLabel lNationality = fieldLabel("Nationality *");
+        lNationality.setBounds(0, 66, 95, 22);
+        card.add(lNationality);
+
+        String[] nationalities = {
+            "Indian", "American", "British", "Australian", "Canadian",
+            "Chinese", "French", "German", "Japanese", "Russian",
+            "Emirati", "Singaporean", "Malaysian", "South African", "Other"
+        };
+        JComboBox<String> cbNationality = new JComboBox<>(nationalities);
+        cbNationality.setBounds(100, 64, 180, 28);
+        styleCombo(cbNationality);
+        card.add(cbNationality);
+
+        // ── Confirm button — right-aligned, row 3 ───────────────────────────
         JButton btnConfirm = accentButton("Confirm Passenger");
         btnConfirm.setFont(new Font("Segoe UI", Font.BOLD, 12));
-        btnConfirm.setBounds(608, 72, 200, 32);
+        btnConfirm.setBounds(608, 114, 200, 32);
         card.add(btnConfirm);
 
-        // ticket label — left of confirm button
+        // ticket label — left of confirm button, row 3
         JLabel ticketLbl = new JLabel("");
         ticketLbl.setFont(new Font("Segoe UI", Font.PLAIN, 12));
         ticketLbl.setForeground(SUCCESS);
-        ticketLbl.setBounds(0, 78, 600, 22);
+        ticketLbl.setBounds(0, 120, 600, 22);
         card.add(ticketLbl);
 
         // ── confirm action ───────────────────────────────────────────────────
         btnConfirm.addActionListener(e -> {
-            String name   = tfName.getText().trim();
-            String gender = (String) cbGender.getSelectedItem();
-            String age    = tfAge.getText().trim();
-            String aadhar = tfAadhar.getText().trim();
+            String name        = tfName.getText().trim();
+            String gender      = (String) cbGender.getSelectedItem();
+            String age         = tfAge.getText().trim();
+            String aadhar      = tfAadhar.getText().trim();
+            String nationality = (String) cbNationality.getSelectedItem();
 
             if (name.isEmpty() || age.isEmpty() || aadhar.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Please fill all fields for Passenger " + idx,
@@ -271,29 +287,29 @@ public class FlightInfo extends JFrame {
 
             try {
                 Conn conn = new Conn();
-                // Insert into reservation table
-                // Columns: PNR, TICKET, aadhar, name, flightname, flightcode, src, des, ddate, gender, age
-                // We insert what we know; nationality field left as empty string if not available
+                // INSERT including gender, age and nationality
                 String query = "INSERT INTO reservation (PNR, TICKET, aadhar, name, nationality, "
-                        + "flightname, flightcode, src, des, ddate) VALUES ('"
-                        + pnr + "', '" + ticketId + "', '" + aadhar + "', '" + name + "', '', '"
-                        + flightName + "', '" + flightCode + "', '" + travelSource + "', '"
-                        + travelDest + "', '" + travelDate + "')";
+                        + "flightname, flightcode, src, des, ddate, gender, age) VALUES ('"
+                        + pnr + "', '" + ticketId + "', '" + aadhar + "', '" + name + "', '"
+                        + nationality + "', '" + flightName + "', '" + flightCode + "', '"
+                        + travelSource + "', '" + travelDest + "', '" + travelDate + "', '"
+                        + gender + "', '" + age + "')";
                 conn.s.executeUpdate(query);
 
                 // Mark confirmed
-                confirmedPassengers.add(new String[]{ticketId, name, gender, age, aadhar});
+                confirmedPassengers.add(new String[]{ticketId, name, gender, age, aadhar, nationality});
 
                 // Update UI
                 statusLbl.setText("✔ Confirmed");
                 statusLbl.setForeground(SUCCESS);
-                ticketLbl.setText("Ticket ID: " + ticketId);
+                ticketLbl.setText("Ticket ID: " + ticketId + "  |  " + nationality + "  |  " + gender + "  |  Age: " + age);
                 btnConfirm.setEnabled(false);
                 btnConfirm.setBackground(new Color(50, 50, 70));
                 tfName.setEditable(false);
                 cbGender.setEnabled(false);
                 tfAge.setEditable(false);
                 tfAadhar.setEditable(false);
+                cbNationality.setEnabled(false);
 
             } catch (Exception ex) {
                 ex.printStackTrace();
@@ -361,8 +377,8 @@ public class FlightInfo extends JFrame {
         pTitle.setBounds(20, 210, 200, 22);
         popup.add(pTitle);
 
-        String[] cols = {"Ticket ID", "Name", "Gender", "Age", "Aadhar No"};
-        Object[][] data = new Object[confirmedPassengers.size()][5];
+        String[] cols = {"Ticket ID", "Name", "Gender", "Age", "Aadhar No", "Nationality"};
+        Object[][] data = new Object[confirmedPassengers.size()][6];
         for (int i = 0; i < confirmedPassengers.size(); i++) {
             data[i] = confirmedPassengers.get(i);
         }

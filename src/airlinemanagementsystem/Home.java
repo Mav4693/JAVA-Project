@@ -76,10 +76,6 @@ public class Home extends JFrame implements ActionListener {
         JMenu details = new JMenu("Details");
         menubar.add(details);
 
-        JMenuItem customerDetails = new JMenuItem("Add Customer Details");
-        customerDetails.addActionListener(this);
-        details.add(customerDetails);
-
         JMenuItem bookFlight = new JMenuItem("Book Flight");
         bookFlight.addActionListener(this);
         details.add(bookFlight);
@@ -108,9 +104,7 @@ public class Home extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent ae) {
 
         String text = ae.getActionCommand();
-        if (text.equals("Add Customer Details")) {
-            new AddCustomer();
-        } else if (text.equals("Book Flight")) {
+        if (text.equals("Book Flight")) {
             new Source_Destination();
         } else if (text.equals("Journey Details")) {
             new JourneyDetails();

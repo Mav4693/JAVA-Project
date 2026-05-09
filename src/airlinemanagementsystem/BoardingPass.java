@@ -7,8 +7,8 @@ import java.sql.*;
 
 public class BoardingPass extends JFrame implements ActionListener {
 
-    JTextField tfpnr;
-    JLabel tfname, tfnationality, lblsrc, lbldest, labelfname, labelfcode, labeldate;
+    JTextField tfticket;
+    JLabel tfname, tfnationality, lblsrc, lbldest, labelfname, labelfcode, labeldate, labeltime;
     JButton fetchButton;
 
     public BoardingPass() {
@@ -34,17 +34,17 @@ public class BoardingPass extends JFrame implements ActionListener {
         subheading.setForeground(Color.WHITE);
         add(subheading);
 
-        // PNR
-        JLabel lblpnr = new JLabel("PNR");
-        lblpnr.setBounds(50, 100, 100, 25);
-        lblpnr.setFont(labelFont);
-        lblpnr.setForeground(Color.WHITE);
-        add(lblpnr);
+        // Ticket ID
+        JLabel lblticket = new JLabel("Ticket ID");
+        lblticket.setBounds(50, 100, 100, 25);
+        lblticket.setFont(labelFont);
+        lblticket.setForeground(Color.WHITE);
+        add(lblticket);
 
-        tfpnr = new JTextField();
-        tfpnr.setBounds(150, 100, 150, 25);
-        tfpnr.setFont(valueFont);
-        add(tfpnr);
+        tfticket = new JTextField();
+        tfticket.setBounds(150, 100, 150, 25);
+        tfticket.setFont(valueFont);
+        add(tfticket);
 
         fetchButton = new JButton("Enter");
         fetchButton.setBounds(320, 100, 100, 25);
@@ -138,6 +138,18 @@ public class BoardingPass extends JFrame implements ActionListener {
         labeldate.setForeground(Color.WHITE);
         add(labeldate);
 
+        JLabel lbl8 = new JLabel("Time");
+        lbl8.setBounds(400, 270, 120, 25);
+        lbl8.setFont(labelFont);
+        lbl8.setForeground(Color.WHITE);
+        add(lbl8);
+
+        labeltime = new JLabel();
+        labeltime.setBounds(520, 270, 200, 25);
+        labeltime.setFont(valueFont);
+        labeltime.setForeground(Color.WHITE);
+        add(labeltime);
+
         // Image
         try {
             ImageIcon img = new ImageIcon(
@@ -145,13 +157,13 @@ public class BoardingPass extends JFrame implements ActionListener {
             Image i = img.getImage().getScaledInstance(280, 180, Image.SCALE_SMOOTH);
             JLabel image = new JLabel(new ImageIcon(i));
             image.setBounds(650, 100, 250, 200);
-            image.setBorder(BorderFactory.createLineBorder(Color.WHITE, 2)); // Added boundary
+            image.setBorder(BorderFactory.createLineBorder(Color.WHITE, 2));
             add(image);
         } catch (Exception e) {
             System.out.println("Image not found");
         }
 
-        setSize(1000, 420);
+        setSize(1000, 450);
         setLocation(300, 150);
         ThemeManager.applyThemeToFrame(this);
         setVisible(true);
@@ -161,24 +173,41 @@ public class BoardingPass extends JFrame implements ActionListener {
 
         if (ae.getSource() == fetchButton) {
 
-            String pnr = tfpnr.getText();
+            String ticket = tfticket.getText().trim();
+
+            if (ticket.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Please enter a Ticket ID.",
+                        "Input Required", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
 
             try {
                 Conn conn = new Conn();
 
-                String query = "select * from reservation where PNR = '" + pnr + "'";
+                String query = "SELECT * FROM reservation WHERE TICKET = '" + ticket + "'";
                 ResultSet rs = conn.s.executeQuery(query);
 
                 if (rs.next()) {
                     tfname.setText(rs.getString("name"));
                     tfnationality.setText(rs.getString("nationality"));
-                    lblsrc.setText(rs.getString("src")); // correct column
-                    lbldest.setText(rs.getString("des")); // correct column
+                    lblsrc.setText(rs.getString("src"));
+                    lbldest.setText(rs.getString("des"));
                     labelfname.setText(rs.getString("flightname"));
                     labelfcode.setText(rs.getString("flightcode"));
                     labeldate.setText(rs.getString("ddate"));
+
+                    // Fetch departure time from flight table
+                    String fcode = rs.getString("flightcode");
+                    ResultSet rs2 = conn.s.executeQuery(
+                            "SELECT dep_time FROM flight WHERE f_code = '" + fcode + "'");
+                    if (rs2.next()) {
+                        labeltime.setText(rs2.getString("dep_time"));
+                    } else {
+                        labeltime.setText("N/A");
+                    }
                 } else {
-                    JOptionPane.showMessageDialog(null, "Invalid PNR");
+                    JOptionPane.showMessageDialog(this, "Invalid Ticket ID",
+                            "Not Found", JOptionPane.ERROR_MESSAGE);
                 }
 
             } catch (Exception e) {
